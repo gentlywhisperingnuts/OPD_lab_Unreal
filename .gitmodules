@@ -1,0 +1,3 @@
+[submodule "ContentSharedAssets"]
+	path = ContentSharedAssets
+	url = https://github.com/HIRMANNS/lab4_OPD
