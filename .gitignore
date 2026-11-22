@@ -1,0 +1,23 @@
+
+# Unreal Engine temporary files
+Binaries/
+Intermediate/
+Saved/
+DerivedDataCache/
+
+# Visual Studio
+.vs/
+*.sln
+*.VC.db
+*.VC.VC.opendb
+
+# Build output
+Builds/
+
+# Operating system
+.DS_Store
+Thumbs.db
+
+# Unreal generated files
+*.tmp
+*.log
