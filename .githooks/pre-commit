@@ -1,0 +1,41 @@
+#!/bin/sh
+
+MAX_SIZE=$((50 * 1024 * 1024))
+
+echo "Pre-commit: checking staged files..."
+
+git diff --cached --name-only --diff-filter=ACMRT |
+while IFS= read -r file
+do
+    # Запрещаем служебные папки Unreal Engine
+    case "/$file/" in
+        */Saved/*|*/Intermediate/*|*/Binaries/*|*/DerivedDataCache/*|*/.vs/*)
+            echo "ERROR: Forbidden Unreal Engine folder: $file"
+            exit 1
+            ;;
+    esac
+
+    # Получаем размер файла, подготовленного к коммиту
+    size=$(git cat-file -s ":$file" 2>/dev/null)
+
+    # Пропускаем файлы, размер которых определить не удалось
+    case "$size" in
+        ''|*[!0-9]*) continue ;;
+    esac
+
+    # Запрещаем файлы больше 50 МБ
+    if [ "$size" -gt "$MAX_SIZE" ]; then
+        echo "ERROR: File exceeds 50 MB and is not stored as an LFS pointer: $file"
+        exit 1
+    fi
+done
+
+result=$?
+
+if [ "$result" -ne 0 ]; then
+    echo "Commit rejected. Fix the errors above."
+    exit 1
+fi
+
+echo "Pre-commit: all checks passed."
+exit 0
